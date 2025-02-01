@@ -1,0 +1,121 @@
+/* Reset default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 350px;
+  height: 400px;
+  background: linear-gradient(135deg, #ffcc80, #ff7043);
+  text-align: center;
+  padding: 15px;
+  border-radius: 10px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+nav {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 14px;
+  border-radius: 12px;
+  box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+  transition: all 0.3s ease-in-out;
+}
+
+nav h2 {
+  font-size: 22px;
+  color: #3e2723;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeInSlideDown 0.1s ease-out forwards;
+}
+
+@keyframes fadeInSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+#productInfo,
+#nutritionInfo {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0px 5px 14px rgba(0, 0, 0, 0.3);
+  margin: 15px 0;
+  width: 92%;
+  font-size: 16px;
+  color: #5d4037;
+  transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+#productInfo:hover,
+#nutritionInfo:hover {
+  box-shadow: 0px 8px 22px rgba(0, 0, 0, 0.4);
+  transform: translateY(-5px);
+}
+
+button {
+  background: linear-gradient(135deg, #43a047, #2e7d32);
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 25px;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out, transform 0.3s, box-shadow 0.3s;
+  margin-top: 4px;
+  font-weight: 700;
+  box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.3);
+  animation: fadeInSlideDown 0.6s ease-out forwards;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #388e3c, #1b5e20);
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0px 9px 22px rgba(0, 0, 0, 0.4);
+}
+
+button:active {
+  transform: translateY(3px) scale(0.95);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
