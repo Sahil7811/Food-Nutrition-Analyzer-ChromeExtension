@@ -1,6 +1,9 @@
 🥗 Food Nutrition Analyzer - Chrome Extension
 The Food Nutrition Analyzer is a Chrome extension that extracts food product data from web pages and provides an instant health assessment. It helps users make informed dietary choices by analyzing nutritional information using AI.
 
+ScreenShot
+![Food Nutrition Analyzer Screenshot](https://github.com/Sahil7811/Food-Nutrition-Analyzer-ChromeExtension/blob/d5ae918ced1efe7a1f32cb25c85110a3af88fa05/Screenshot%202025-02-03%20141117.png)
+
 🚀 Features\
 ✅ Automatic Data Extraction – Captures product name, ingredients, and nutritional details from the current webpage.\
 ✅ AI-Powered Analysis – Uses the Gemini API to evaluate the product’s nutritional quality.\
