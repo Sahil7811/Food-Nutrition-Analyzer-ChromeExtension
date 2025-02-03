@@ -13,32 +13,123 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 async function fetchNutritionDetails(product) {
   if (!product?.name) throw new Error("Invalid product name");
 
-  const prompt = `Analyze the nutrition of this product :
-  Name: ${product.name}
-  Extract all information from its name and Check its ingrediants on internet and Provide a Nutri-Grade (A to E)
-  Summarize its health benefits and risks, at the end of your response just give one word answer for each nutri grade :  and healthy : Yes/No
-  "Analyze the following food product based on its name, ingredients, and nutritional content. Provide the response in this exact structured format:
-1) "Product Details":
-Product Name: [Product Name]
-Description: [Short Description]
-Category: [Food Category]
-Brand (if available): [Brand Name]
+  const prompt = `
+  **🔍 Final Verdict:**  
+  - **Nutri-Grade:** [A / B / C / D / E]  
+  - **Healthy:** [Yes / No]  
 
-2) "Ingredients List":
-List all ingredients with their quantities (if available).
-Highlight any artificial additives, preservatives, or allergens.
+  ---  
 
-3) "Health Benefits & Risks":
-List the key benefits of consuming this product.
-Mention health risks (e.g., high sugar, artificial additives, allergens).
+  **🥡 Product Details:**  
+  - **Name:** ${product.name}  
+  - **Description:** [Short description based on product type]  
+  - **Category:** [Food category]  
+  - **Brand:** [Brand Name, if available]  
 
-"Final Verdict":
-Nutri-Grade: A/B/C/D/E
-Healthy: Yes/No
+  ---  
 
-final verdict should be dispalyed first.
-Now, analyze this product and return the response in the format above:
-and give all the info in a structured way with highlighted important text and provide the information in short and crisp manner`;
+  **📋 Ingredients List:**  
+- **Primary Ingredient:** [Quantity (if available)] - [Remarks: Additives, Preservatives, Allergens]  
+- **Secondary Ingredient:** [Quantity (if available)] - [Remarks]  
+- **Sweeteners & Sugars:** [Quantity] - [E.g., "Refined Sugar, Artificial Sweeteners (Aspartame)"]  
+- **Fats & Oils:** [Quantity] - [E.g., "Palm Oil (High Saturated Fat), Sunflower Oil (Healthier Alternative)"]  
+- **Artificial Additives & Preservatives:** [If present] - [E.g., "MSG, Artificial Colors (E150d), Preservatives (Sodium Benzoate)"]  
+- **Acidity Regulators & Stabilizers:** [If present] - [E.g., "Citric Acid (E330), Xanthan Gum (E415)"]  
+- **Protein Sources:** [Quantity] - [E.g., "Soy Protein, Whey Protein, Casein"]  
+- **Vegetable & Fruit Content:** [If applicable] - [E.g., "Dehydrated Vegetables (Carrot, Peas, Tomato Powder)"]  
+- **Dietary Fiber & Whole Grains:** [If applicable] - [E.g., "Oats, Whole Wheat, Psyllium Husk"]  
+- **Flavor Enhancers:** [If applicable] - [E.g., "Natural & Artificial Flavors (Vanilla Extract, Ethyl Vanillin)"]  
+
+*(More ingredients if available...)* 
+
+  ---  
+
+  **⚠️ Allergy Information:**  
+  - 🚨 **Contains:** [List of allergens, e.g., gluten, dairy, nuts, soy]  
+  - ⚠️ **May contain traces of:** [Possible cross-contaminants]  
+
+  ---  
+
+  **🍽️ Nutritional Information (Per 100g / Per Serving):**  
+  - Calories: [XXX kcal]  
+  - Protein: [Xg]  
+  - Carbohydrates: [Xg]  
+  - Sugars: [Xg]  
+  - Fat: [Xg]  
+  - Saturated Fat: [Xg]  
+  - Fiber: [Xg]  
+  - Sodium: [Xmg]   
+   and more Nutrients if available
+
+  ---  
+
+  **🚦 Glycemic Index & Blood Sugar Impact:**  
+  - **Glycemic Index (GI):** [Low / Medium / High]  
+  - **Glycemic Load (GL):** [Low / Medium / High]  
+  - **Impact on Blood Sugar:** [Short description]  
+
+  ---  
+
+  **💪 Fitness & Muscle Building Suitability:**  
+  - ✅ **High-Protein:** Yes/No  
+  - ✅ **Good for Pre/Post-Workout:** Yes/No  
+  - ✅ **Affects Hydration Levels:** Yes/No  
+
+  ---  
+
+  **👶👴 Suitability for Age Groups:**  
+  - ✅ **Safe for Children?** Yes/No (Reason)  
+  - ✅ **Safe for Elderly?** Yes/No (Reason)  
+
+  ---  
+
+  **⚗️ Additives & Preservatives Score:**  
+  - **Artificial Additives:** Low/Medium/High  
+  - **Preservatives Used:** [List]  
+  - **Artificial Colors & Flavors:** Yes/No  
+
+  ---  
+
+  **🍃 Health Insights:**  
+  **✔️ Benefits:**  
+  - ✅ [Benefit 1]  
+  - ✅ [Benefit 2]  
+  - ✅ [Benefit 3]  
+
+  **⚠️ Risks:**  
+  - ⚠️ [Risk 1]  
+  - ⚠️ [Risk 2]  
+  - ⚠️ [Risk 3]  
+
+  ---  
+
+  **📊 Recommended Consumption & Alternatives:**  
+  - 🕒 **Recommended Consumption:** [e.g., "Safe for daily intake" / "Best in moderation" / "Occasional treat"]  
+  - 🔄 **Healthier Alternatives:** [Suggestions, if applicable]  
+
+  ---  
+
+  **🌍 Carbon Footprint & Sustainability:**  
+  - 🌱 **Sustainable Farming:** Yes/No  
+  - 🛢️ **Carbon Footprint Level:** Low/Medium/High  
+  - 🥤 **Eco-Friendly Packaging:** Yes/No  
+
+  ---  
+
+  **💰 Cost & Value for Money:**  
+  - **Price Range:** [Budget / Mid-Range / Premium]  
+  - **Cost per 100g / Serving:** [$X.XX]  
+  - **Worth the Price?** Yes/No  
+
+  ---  
+
+  **🍃 Suitability for Diets & Lifestyles:**  
+  - ✅ **Vegan:** Yes/No  
+  - ✅ **Gluten-Free:** Yes/No  
+  - ✅ **Keto-Friendly:** Yes/No  
+
+  *(Disclaimer: Analysis is based on general food knowledge. For precise details, refer to product packaging.)*
+  `;
 
   try {
     const GEMINI_API_KEY = "API KEY"; // Replace with your actual API key
