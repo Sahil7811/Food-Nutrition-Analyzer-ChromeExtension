@@ -137,7 +137,7 @@ async function fetchNutritionDetails(product) {
 
   try {
     // Define API key for Gemini AI model (Replace with actual API key)
-    const GEMINI_API_KEY = "AIzaSyBcgrVLe9JfVWU8fv1ni_cggvQzxc2v0tc";
+    const GEMINI_API_KEY = "API_KEY";
 
     // Make a request to the Gemini API
     const response = await fetch(
