@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "Nutrition Analyzer",
   "version": "1.0",
+  "description": "Analyze nutritional information of food products from web pages",
   "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["https://generativelanguage.googleapis.com/"],
   "background": {
