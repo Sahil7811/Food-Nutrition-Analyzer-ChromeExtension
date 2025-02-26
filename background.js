@@ -1,167 +1,199 @@
+// Listen for messages from other parts of the Chrome extension
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  // Check if the received message has an action to fetch nutrition details
   if (request.action === "fetch_nutrition") {
+    // Call the function to fetch nutrition details and handle the response
     fetchNutritionDetails(request.product)
-      .then((nutritionData) => sendResponse({ result: nutritionData }))
+      .then((nutritionData) => sendResponse({ result: nutritionData })) // Send the fetched data back to the sender
       .catch((error) => {
-        console.error("Error:", error);
-        sendResponse({ result: "Could not analyze product" });
+        console.error("Error:", error); // Log any errors
+        sendResponse({ result: "Could not analyze product" }); // Send an error response
       });
-    return true; // Ensures async sendResponse works
+
+    return true; // Keeps the connection alive for async `sendResponse`
   }
 });
 
+// Enhanced function to fetch nutrition details using the Gemini API
 async function fetchNutritionDetails(product) {
-  if (!product?.name) throw new Error("Invalid product name");
+  // Ensure there's at least some product data before making an API call
+  if (!product) throw new Error("Invalid product data");
 
+  // Create a more detailed prompt based on all the scraped data
   const prompt = `
+  Analyze the following food product and provide a detailed nutritional assessment.
+  - Name: ${product.name || "Unknown"}
+  - Brand: ${product.brand || "Not Specified"}
+  - Description: ${product.description || "Not Available"}
+  - URL: ${product.url || "Not Available"}
+  
+  **Ingredients:**
+  ${product.ingredients || "No ingredient information found."}
+  
+  **Nutrition Information:**
+  ${product.nutritionTable || ""}
+  
+  ${
+    product.nutritionValues?.calories
+      ? `- Calories: ${product.nutritionValues.calories} kcal`
+      : ""
+  }
+  ${
+    product.nutritionValues?.protein
+      ? `- Protein: ${product.nutritionValues.protein}g`
+      : ""
+  }
+  ${
+    product.nutritionValues?.carbs
+      ? `- Carbohydrates: ${product.nutritionValues.carbs}g`
+      : ""
+  }
+  ${
+    product.nutritionValues?.fat ? `- Fat: ${product.nutritionValues.fat}g` : ""
+  }
+  ${
+    product.nutritionValues?.sugar
+      ? `- Sugar: ${product.nutritionValues.sugar}g`
+      : ""
+  }
+  ${
+    product.nutritionValues?.sodium
+      ? `- Sodium: ${product.nutritionValues.sodium}mg`
+      : ""
+  }
+  
+  **Allergy Information:**
+  ${product.allergyInfo || "No specific allergy information found."}
+  
+  **Dietary Preferences:**
+  - Appears to be Vegan: ${product.dietary?.vegan ? "Yes" : "No indication"}
+  - Appears to be Gluten-Free: ${
+    product.dietary?.glutenFree ? "Yes" : "No indication"
+  }
+  - Appears to be Organic: ${product.dietary?.organic ? "Yes" : "No indication"}
+
+  Based on all available information, please provide a comprehensive nutrition analysis with the following:
+
   **🔍 Final Verdict:**  
   - **Nutri-Grade:** [A / B / C / D / E]  
   - **Healthy:** [Yes / No]  
-
+  note: in final verdict do not provide information only provide the score and is it healthy or not
   ---  
 
   **🥡 Product Details:**  
   - **Name:** ${product.name}  
   - **Description:** [Short description based on product type]  
   - **Category:** [Food category]  
-  - **Brand:** [Brand Name, if available]  
+  - **Brand:** ${product.brand || "[Brand Name if detected]"}  
 
   ---  
 
-  **📋 Ingredients List:**  
-- **Primary Ingredient:** [Quantity (if available)] - [Remarks: Additives, Preservatives, Allergens]  
-- **Secondary Ingredient:** [Quantity (if available)] - [Remarks]  
-- **Sweeteners & Sugars:** [Quantity] - [E.g., "Refined Sugar, Artificial Sweeteners (Aspartame)"]  
-- **Fats & Oils:** [Quantity] - [E.g., "Palm Oil (High Saturated Fat), Sunflower Oil (Healthier Alternative)"]  
-- **Artificial Additives & Preservatives:** [If present] - [E.g., "MSG, Artificial Colors (E150d), Preservatives (Sodium Benzoate)"]  
-- **Acidity Regulators & Stabilizers:** [If present] - [E.g., "Citric Acid (E330), Xanthan Gum (E415)"]  
-- **Protein Sources:** [Quantity] - [E.g., "Soy Protein, Whey Protein, Casein"]  
-- **Vegetable & Fruit Content:** [If applicable] - [E.g., "Dehydrated Vegetables (Carrot, Peas, Tomato Powder)"]  
-- **Dietary Fiber & Whole Grains:** [If applicable] - [E.g., "Oats, Whole Wheat, Psyllium Husk"]  
-- **Flavor Enhancers:** [If applicable] - [E.g., "Natural & Artificial Flavors (Vanilla Extract, Ethyl Vanillin)"]  
-
-*(More ingredients if available...)* 
+  **📋 Ingredients Analysis:**  
+  - [Analysis of key ingredients, additives, and their health implications]
+  - [Analysis of sweeteners, sugars, oils, preservatives, etc.]
 
   ---  
 
   **⚠️ Allergy Information:**  
-  - 🚨 **Contains:** [List of allergens, e.g., gluten, dairy, nuts, soy]  
-  - ⚠️ **May contain traces of:** [Possible cross-contaminants]  
+  - 🚨 **Contains:** [List of detected allergens]  
+  - ⚠️ **May contain traces of:** [Possible cross-contaminants if mentioned]  
 
   ---  
 
-  **🍽️ Nutritional Information (Per 100g / Per Serving):**  
-  - Calories: [XXX kcal]  
-  - Protein: [Xg]  
-  - Carbohydrates: [Xg]  
-  - Sugars: [Xg]  
-  - Fat: [Xg]  
-  - Saturated Fat: [Xg]  
-  - Fiber: [Xg]  
-  - Sodium: [Xmg]   
-   and more Nutrients if available
+  **🍽️ Nutritional Value Assessment:**  
+  - [Analysis of calories, protein, carbs, fats, etc.]
+  - [Evaluation of nutritional balance]
 
   ---  
 
   **🚦 Glycemic Index & Blood Sugar Impact:**  
-  - **Glycemic Index (GI):** [Low / Medium / High]  
-  - **Glycemic Load (GL):** [Low / Medium / High]  
-  - **Impact on Blood Sugar:** [Short description]  
+  - **Expected Glycemic Impact:** [Low / Medium / High]
+  - **Impact on Blood Sugar:** [Brief assessment]
 
   ---  
 
-  **💪 Fitness & Muscle Building Suitability:**  
-  - ✅ **High-Protein:** Yes/No  
-  - ✅ **Good for Pre/Post-Workout:** Yes/No  
-  - ✅ **Affects Hydration Levels:** Yes/No  
-
-  ---  
-
-  **👶👴 Suitability for Age Groups:**  
-  - ✅ **Safe for Children?** Yes/No (Reason)  
-  - ✅ **Safe for Elderly?** Yes/No (Reason)  
-
-  ---  
-
-  **⚗️ Additives & Preservatives Score:**  
-  - **Artificial Additives:** Low/Medium/High  
-  - **Preservatives Used:** [List]  
-  - **Artificial Colors & Flavors:** Yes/No  
+  **💪 Fitness & Health Relevance:**  
+  - **Suitable for muscle building:** [Yes/No/Maybe]
+  - **Good for weight management:** [Yes/No/Maybe]
 
   ---  
 
   **🍃 Health Insights:**  
   **✔️ Benefits:**  
-  - ✅ [Benefit 1]  
-  - ✅ [Benefit 2]  
-  - ✅ [Benefit 3]  
+  - [List main health benefits if any]
 
-  **⚠️ Risks:**  
-  - ⚠️ [Risk 1]  
-  - ⚠️ [Risk 2]  
-  - ⚠️ [Risk 3]  
+  **⚠️ Concerns:**  
+  - [List main health concerns if any]
 
   ---  
 
-  **📊 Recommended Consumption & Alternatives:**  
-  - 🕒 **Recommended Consumption:** [e.g., "Safe for daily intake" / "Best in moderation" / "Occasional treat"]  
-  - 🔄 **Healthier Alternatives:** [Suggestions, if applicable]  
+  **📊 Consumption Advice:**  
+  - 🕒 **Recommended Consumption Pattern:** [e.g., "Daily", "Occasional", "Limit intake"]
+  - 🔄 **Healthier Alternatives:** [Suggestions if applicable]
 
-  ---  
-
-  **🌍 Carbon Footprint & Sustainability:**  
-  - 🌱 **Sustainable Farming:** Yes/No  
-  - 🛢️ **Carbon Footprint Level:** Low/Medium/High  
-  - 🥤 **Eco-Friendly Packaging:** Yes/No  
-
-  ---  
-
-  **💰 Cost & Value for Money:**  
-  - **Price Range:** [Budget / Mid-Range / Premium]  
-  - **Cost per 100g / Serving:** [$X.XX]  
-  - **Worth the Price?** Yes/No  
-
-  ---  
-
-  **🍃 Suitability for Diets & Lifestyles:**  
-  - ✅ **Vegan:** Yes/No  
-  - ✅ **Gluten-Free:** Yes/No  
-  - ✅ **Keto-Friendly:** Yes/No  
-
-  *(Disclaimer: Analysis is based on general food knowledge. For precise details, refer to product packaging.)*
+  Note: If information is missing or incomplete, make reasonable assessments based on similar products, but indicate that this is an estimate.
+  add this line at the end : *(Disclaimer: The analysis is based solely on the information provided on the food product packaging.)*
   `;
 
   try {
-    const GEMINI_API_KEY = "API KEY"; // Replace with your actual API key
+    // Define API key for Gemini AI model (Replace with actual API key)
+    const GEMINI_API_KEY = "AIzaSyBcgrVLe9JfVWU8fv1ni_cggvQzxc2v0tc";
+
+    // Make a request to the Gemini API
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", // Use POST method
+        headers: { "Content-Type": "application/json" }, // Set content type to JSON
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
+          contents: [{ parts: [{ text: prompt }] }], // Send the formatted prompt
+          // Add parameters to improve response
+          generationConfig: {
+            temperature: 0.2, // Lower temperature for more factual responses
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 1024,
+          },
         }),
       }
     );
 
+    // Check if the response is successful
     if (!response.ok) {
-      throw new Error(`HTTP Error: ${response.status}`);
+      throw new Error(`HTTP Error: ${response.status}`); // Throw an error if the request fails
     }
 
+    // Parse the response JSON
     const data = await response.json();
-    console.log("Gemini API Data:", data);
+    console.log("Gemini API Data:", data); // Log API response for debugging
 
+    // Extract the generated text response
     let text =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "Unknown";
+      data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+      "Could not generate nutrition analysis.";
 
+    // Function to clean the text (removes asterisks used for formatting)
     const cleanText = (text) => {
-      // Remove any asterisks used for bold formatting
-      return text.replace(/\*/g, "");
+      return text.replace(/\*/g, ""); // Remove asterisks from text
     };
-    text = cleanText(text);
-    return text;
+
+    text = cleanText(text); // Apply text cleaning
+
+    // Return fallback message if the scraped data is very limited
+    if (
+      (!product.ingredients || product.ingredients === "Not Found") &&
+      !product.nutritionTable &&
+      !Object.values(product.nutritionValues || {}).some((v) => v)
+    ) {
+      return `Limited product information available for ${
+        product.name || "this product"
+      }. 
+              Please try on a product details page with more nutritional information.`;
+    }
+
+    return text; // Return the processed response
   } catch (error) {
-    console.error("Fetch error:", error);
-    return "API Error";
+    console.error("Fetch error:", error); // Log any errors
+    return "API Error: Could not analyze product nutrition. Please check your API key and network connection.";
   }
 }

@@ -3,9 +3,23 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+  font-family: "Inter", sans-serif;
   scroll-behavior: smooth;
 }
+/* h2 {
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+h4 {
+  font-weight: 600;
+  color: #4e342e;
+}
+
+button {
+  font-weight: 700;
+  text-transform: uppercase;
+} */
 
 body {
   display: flex;
@@ -33,19 +47,39 @@ body {
 }
 
 nav {
+  font-family: "Inter", sans-serif;
   width: 100%;
   background: rgba(255, 255, 255, 0.95);
   padding: 14px;
   border-radius: 12px;
   box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.3);
   display: flex;
+  flex-direction: column; /* Arrange items in a column */
   justify-content: center;
   align-items: center;
+  text-align: center;
   margin-bottom: 8px;
   transition: all 0.3s ease-in-out;
 }
 
 nav h2 {
+  font-family: "Inter", sans-serif;
+  font-size: 22px;
+  color: #3e2723;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 5px; /* Adds spacing between h2 and h4 */
+}
+
+nav h4 {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  color: #5d4037;
+  font-weight: 600;
+}
+
+nav h2 {
+  font-family: "Inter", sans-serif;
   font-size: 22px;
   color: #3e2723;
   font-weight: 800;
@@ -77,21 +111,21 @@ nav h2 {
 #productInfo,
 #nutritionInfo {
   background: rgba(255, 255, 255, 0.95);
-  padding: 16px;
-  border-radius: 14px;
-  box-shadow: 0px 5px 14px rgba(0, 0, 0, 0.3);
-  margin: 15px 0;
-  width: 92%;
-  font-size: 16px;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+  margin: 18px 0;
+  width: 95%;
+  font-size: 18px;
   color: #5d4037;
-  transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
-  animation: fadeIn 0.6s ease-in-out;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  animation: fadeIn 0.7s ease-in-out;
 }
 
 #productInfo:hover,
 #nutritionInfo:hover {
-  box-shadow: 0px 8px 22px rgba(0, 0, 0, 0.4);
-  transform: translateY(-5px);
+  box-shadow: 0px 12px 28px rgba(0, 0, 0, 0.4);
+  transform: translateY(-6px) scale(1.04);
 }
 
 button {
