@@ -15,7 +15,7 @@ ScreenShot
 
 🛠 Installation\
 1️⃣ Clone this repository:\
-git clone https://github.com/yourusername/Food-Nutrition-Analyzer.git
+git clone
 
 2️⃣ Load the extension into Chrome:\
 Open Chrome and go to chrome://extensions/
